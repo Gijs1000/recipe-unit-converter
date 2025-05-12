@@ -3,6 +3,7 @@ repos:
     rev: 23.3.0
     hooks:
     -   id: black
+        args: [--line-length=79]
         language_version: python3
 
 -   repo: https://www.github.com/pycqa/flake8
@@ -10,3 +11,15 @@ repos:
     hooks:
     -   id: flake8
         additional_dependencies: [flake8-docstrings]
+
+-   repo: local
+    hooks:
+    - id: pytest
+      name: pytest
+      entry: pytest
+      language: system
+      pass_filenames: false
+      types: [python]
+      files: \.py$
+      always_run: false
+      stages: [pre-commit]
