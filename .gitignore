@@ -34,3 +34,45 @@ coverage.xml
 # OS specific files
 .DS_Store
 Thumbs.db
+
+# Pre-commit cache
+.pre-commit-cache/
+
+# Windows specific
+*.lnk
+~$*
+Thumbs.db
+desktop.ini
+
+# Additional Python tooling
+.pytest_cache/
+.mypy_cache/
+pytest-report.html
+
+# Coverage reports
+htmlcov/
+.coverage.*
+
+# Logs
+*.log
+logs/
+
+# Environment variables
+.env
+.env.*
+
+# Potential database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Visual Studio Code specific
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Jupyter Notebooks
+*.ipynb
+EOL
