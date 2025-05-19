@@ -30,18 +30,16 @@ class RecipeParser:
     """Parser for extracting ingredients from recipe text."""
 
     # Regex patterns
-    FRACTION_PATTERN = r"(\d+\s+)?\d+/\d+"
+    FRACTION_PATTERN = r"(?:\d+\s+)?(?:\d+/\d+)"
     DECIMAL_PATTERN = r"\d+\.\d+"
     INTEGER_PATTERN = r"\d+"
 
     # Combined pattern for any number format
-    NUMBER_PATTERN = (
-        f"({FRACTION_PATTERN}|{DECIMAL_PATTERN}|{INTEGER_PATTERN})"
-    )
+    NUMBER_PATTERN = f"(?:{FRACTION_PATTERN}|{DECIMAL_PATTERN}|{INTEGER_PATTERN})"  # noqa: E231, E501
 
     # Common US volume units with variations
     VOLUME_UNITS = {
-        "cup": ["cup", "cups", "c", "c."],
+        "cup": ["cup", "cups", "c.", "c"],
         "tablespoon": [
             "tablespoon",
             "tablespoons",
@@ -49,9 +47,8 @@ class RecipeParser:
             "tbsp.",
             "tbs",
             "tbs.",
-            "T",
         ],
-        "teaspoon": ["teaspoon", "teaspoons", "tsp", "tsp.", "t"],
+        "teaspoon": ["teaspoon", "teaspoons", "tsp", "tsp."],
         "fluid ounce": [
             "fluid ounce",
             "fluid ounces",
@@ -79,15 +76,21 @@ class RecipeParser:
     # All units combined
     ALL_UNITS = {**VOLUME_UNITS, **WEIGHT_UNITS, **TEMPERATURE_UNITS}
 
-    # Flatten the unit variations into a single list for regex
-    UNIT_VARIATIONS = [
-        var for variations in ALL_UNITS.values() for var in variations
-    ]
+    # Flatten the unit variations into a single list for regex. Sory by longest word
+    # first so the regex later on will find "cups" instead of stopping at "cup" since
+    # that is matched.
+    UNIT_VARIATIONS = sorted(
+        [var for variations in ALL_UNITS.values() for var in variations],
+        key=len,
+        reverse=True,
+    )
 
     # Ingredient line pattern - matches lines that likely contain ingredients
-    # This regex pattern is designed to match typical ingredient lines
+    # This regex pattern is designed to match typical ingredient lines.
+    # It maches a number, followed by a unit, followed by either "of" (as in 0.5 liters
+    # of milk) or by the ingredient (as in 5 teaspoons milk).
     INGREDIENT_PATTERN = re.compile(
-        rf'^\s*({NUMBER_PATTERN})?\s*({"|".join(UNIT_VARIATIONS)})?\s*(.+?)$',
+        rf'^\s*({NUMBER_PATTERN})?\s*(?:\b({"|".join(UNIT_VARIATIONS)})\b)?\s*(.+?)$',  # noqa: E231, E501
         re.IGNORECASE,
     )
 
@@ -137,21 +140,23 @@ class RecipeParser:
         if not match:
             return None
 
-        amount_str, unit_str, name = match.groups()
+        groups = match.groups()
+        amount_str, unit_str, name = groups
 
-        # If no amount or unit, this might not be an ingredient
+        # If there's no amount but there is a unit, assume amount is 1
+        if not amount_str and unit_str:
+            amount_str = "1"
+
+        # If there's no amount and no unit, it's probably not an ingredient
         if not amount_str and not unit_str:
             return None
 
-        # Parse the amount
-        amount = 1.0
+        # Parse amount
         if amount_str:
             try:
-                # Handle mixed numbers and fractions
-                amount_str = amount.str.strip()
+                amount_str = amount_str.strip()  # Not amount.str
                 amount = float(sum(Fraction(s) for s in amount_str.split()))
             except ValueError:
-                # If parsing fails, this might not be an ingredient.
                 return None
 
         # Clean and normalize the unit
@@ -176,7 +181,7 @@ class RecipeParser:
         Returns:
             str: Canonical unit name.
         """
-        unit_str = unit_str.casefold().strip(".")
+        unit_str = unit_str.casefold()
 
         # Return canonical unit name or un-normalized if not found.
         return self.unit_map.get(unit_str, unit_str)
