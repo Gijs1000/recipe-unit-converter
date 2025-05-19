@@ -25,8 +25,8 @@ def convert_volume(amount: float, from_unit: str, to_unit: str) -> float:
     }
 
     # Check if units are valid
-    validate_unit(to_unit, ml_conversions)
-    validate_unit(from_unit, ml_conversions)
+    _validate_unit(to_unit, ml_conversions)
+    _validate_unit(from_unit, ml_conversions)
 
     # Convert to base unit (ml)
     base_amount = amount * ml_conversions.get(from_unit)
@@ -57,8 +57,8 @@ def convert_weight(amount: float, from_unit: str, to_unit: str) -> float:
     g_conversions = {"g": 1, "kg": 1000, "oz": 28.35, "lb": 453.592}
 
     # Check if units are valid
-    validate_unit(to_unit, g_conversions)
-    validate_unit(from_unit, g_conversions)
+    _validate_unit(to_unit, g_conversions)
+    _validate_unit(from_unit, g_conversions)
 
     # Convert to base unit (g)
     base_amount = amount * g_conversions.get(from_unit)
@@ -97,7 +97,7 @@ def convert_temperature(temp: float, from_unit: str, to_unit: str) -> float:
         )
 
 
-def validate_unit(unit: str, valid_units: dict) -> None:
+def _validate_unit(unit: str, valid_units: dict) -> None:
     """
     Validate that a unit exists in the dictionary of valid units.
 

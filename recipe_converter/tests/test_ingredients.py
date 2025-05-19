@@ -5,7 +5,7 @@ recipe_converter.ingredients module.
 """
 
 import pytest
-from recipe_converter.ingredients import Ingredient
+from recipe_converter.models import Ingredient
 
 
 class TestIngredient:

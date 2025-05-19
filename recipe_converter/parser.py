@@ -5,25 +5,8 @@ ingredients with their measurements.
 """
 
 import re
-from dataclasses import dataclass
 from fractions import Fraction
-
-
-@dataclass
-class ParsedIngredient:
-    """Represents a parsed ingredient from a recipe text.
-
-    Attributes:
-        amount: The numerical quantity.
-        unit: The unit of measurement (cup, tbsp, etc.)
-        name: The name of the ingredient.
-        original_text: The original text this was parsed from.
-    """
-
-    amount: float
-    unit: str
-    name: str
-    original_text: str
+from recipe_converter.models import ParsedIngredient
 
 
 class RecipeParser:

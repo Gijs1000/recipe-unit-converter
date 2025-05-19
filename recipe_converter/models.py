@@ -6,7 +6,7 @@ converting between US and metric measurements in recipes.
 
 from dataclasses import dataclass, field
 
-from recipe_converter.units import convert_volume
+from recipe_converter.converter import convert_volume
 
 
 @dataclass
@@ -56,3 +56,20 @@ class Ingredient:
         """
         cups = grams / self.density
         return convert_volume(cups, "cup", unit)
+
+
+@dataclass
+class ParsedIngredient:
+    """Represents a parsed ingredient from a recipe text.
+
+    Attributes:
+        amount: The numerical quantity.
+        unit: The unit of measurement (cup, tbsp, etc.)
+        name: The name of the ingredient.
+        original_text: The original text this was parsed from.
+    """
+
+    amount: float
+    unit: str
+    name: str
+    original_text: str

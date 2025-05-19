@@ -1,7 +1,7 @@
 """Tests for the unit conversion functions."""
 
 import pytest
-from recipe_converter.units import (
+from recipe_converter.converter import (
     convert_volume,
     convert_weight,
     convert_temperature,
