@@ -5,8 +5,14 @@ converting between US and metric measurements in recipes.
 """
 
 from dataclasses import dataclass, field
+from enum import Enum, auto
 
 from recipe_converter.converter import convert_volume
+
+class IngredientState(Enum):
+    """Physical state of an ingredient for conversion purposes."""
+    SOLID = auto() # Convert to weight (grams)
+    LIQUID = auto() # Convert to volume (milliliters)
 
 
 @dataclass
@@ -17,17 +23,24 @@ class Ingredient:
     Attributes:
     name: The canonical name of the ingredient
     density: The density in grams per cup
+    state: Physical state (solid or liquid) for conversion logic
     aliases: Alternative names for this ingredient
     """
 
     name: str  # Base name for lookup
     density: float  # grams per cup
+    state: IngredientState
     aliases: list[str] = field(default_factory=list)
 
     def __post_init__(self):
         """Process the name and aliases after initialization."""
         self.name = self.name.casefold()  # lower name incl. special characters
         self.aliases = [alias.casefold() for alias in self.aliases]
+
+    @property
+    def target_unit(self) -> str:
+        """Return the appropriate target unit based on physical state."""
+        return "g" if self.state == IngredientState.SOLID else "ml"
 
     def convert_volume_to_weight(self, amount: float, unit: str) -> float:
         """

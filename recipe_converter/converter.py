@@ -17,11 +17,11 @@ def convert_volume(amount: float, from_unit: str, to_unit: str) -> float:
     # Conversion to milliliters (ml) as base unit
     ml_conversions = {
         "cup": 236.588,
-        "tbsp": 14.787,
-        "tsp": 4.929,
-        "fl_oz": 29.574,
-        "ml": 1,
-        "l": 1000,
+        "tablespoon": 14.787,
+        "teaspoon": 4.929,
+        "fluid ounce": 29.574,
+        "milliliter": 1,
+        "liter": 1000,
     }
 
     # Check if units are valid
