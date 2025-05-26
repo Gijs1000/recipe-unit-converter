@@ -20,7 +20,7 @@ class Ingredient:
     aliases: Alternative names for this ingredient
     """
 
-    name: str
+    name: str  # Base name for lookup
     density: float  # grams per cup
     aliases: list[str] = field(default_factory=list)
 

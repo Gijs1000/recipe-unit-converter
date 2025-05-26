@@ -168,3 +168,7 @@ class RecipeParser:
 
         # Return canonical unit name or un-normalized if not found.
         return self.unit_map.get(unit_str, unit_str)
+
+
+# Create a singleton instance for easy import
+recipe_parser = RecipeParser()
